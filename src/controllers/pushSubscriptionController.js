@@ -1,4 +1,4 @@
-const PushSubscription = require("../models/PushSubscription");
+const PushSubscription = require("../models/pushSubscription");
 const responseUtil = require("../utils/responseUtil");
 
 const pushSubscriptionController = {
