@@ -49,6 +49,7 @@ const reminderSchema = new mongoose.Schema(
       enum: ["push", "email", "sms", "all"],
       default: "push",
     },
+        lastNotificationSentAt: Date,
     isActive: {
       type: Boolean,
       default: true,

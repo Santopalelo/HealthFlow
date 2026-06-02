@@ -9,10 +9,10 @@ const validationMiddleware = {
     });
 
     if (error) {
-      const details = {
-        field: error.details[0].path.join("."),
-        message: error.details[0].message,
-      };
+      const details = error.details.map((detail) => ({
+        field: detail.path.join("."),
+        message: detail.message,
+      }));
 
       return res.status(400).json({
         success: false,
@@ -190,6 +190,19 @@ const schemas = {
     id: Joi.string()
       .regex(/^[0-9a-fA-F]{24}$/)
       .required(),
+  }),
+
+  // Push Subscription
+    pushSubscriptionSchema: Joi.object({
+    patientId: Joi.string().required(),
+    subscription: Joi.object({
+      endpoint: Joi.string().uri().required(),
+      expirationTime: Joi.date().optional(),
+      keys: Joi.object({
+        p256dh: Joi.string().required(),
+        auth: Joi.string().required(),
+      }).required(),
+    }).required(),
   }),
 };
 

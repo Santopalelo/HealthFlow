@@ -14,6 +14,10 @@ const complianceRoutes = require("./routes/complianceRoutes");
 const deviceRoutes = require("./routes/deviceRoutes");
 const healthRoutes = require("./routes/healthRoutes");
 const logger = require("./middleware/logger");
+const pushSubscriptionRoutes = require("./routes/pushSubscriptionRoutes");
+const {
+  startReminderNotificationScheduler,
+} = require("../services/reminderNotificationService");
 
 const app = express();
 
@@ -53,6 +57,7 @@ app.get("/api/health", (req, res) => {
 
 // API Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/push-subscriptions", pushSubscriptionRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/reminders", reminderRoutes);
 app.use("/api/compliance", complianceRoutes);
@@ -81,10 +86,22 @@ const startServer = async () => {
 
     // Start Express Server
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
       console.log(`✓ Server running on port ${PORT}`);
       console.log(`✓ Environment: ${process.env.NODE_ENV}`);
       console.log(`✓ API Base: http://localhost:${PORT}/api`);
+      startReminderNotificationScheduler();
+    });
+
+    server.on("error", (error) => {
+      if (error.code === "EADDRINUSE") {
+        console.error(
+          `✗ Port ${PORT} is already in use. Change PORT in .env or stop the process using this port.`,
+        );
+      } else {
+        console.error("✗ Server error:", error);
+      }
+      process.exit(1);
     });
   } catch (error) {
     console.error("✗ Failed to start server:", error.message);
