@@ -1,5 +1,5 @@
 const Reminder = require("../src/models/Reminder");
-const PushSubscription = require("../src/models/PushSubscription");
+const pushSubscription = require("../src/models/pushSubscription");
 const Patient = require("../src/models/Patient");
 const { sendPushNotification } = require("../src/utils/webPushUtil");
 const { sendEmail } = require("../src/utils/emailUtil");
@@ -78,7 +78,7 @@ const notifyReminder = async (reminder) => {
   const payload = buildReminderPayload(reminder);
 
   if (["push", "all"].includes(reminder.notificationMethod)) {
-    const subscriptions = await PushSubscription.find({
+    const subscriptions = await pushSubscription.find({
       patientId: reminder.patientId,
     });
     await Promise.all(
