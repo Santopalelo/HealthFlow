@@ -27,12 +27,7 @@ const app = express();
 
 // Security Middleware
 app.use(helmet());
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN?.split(",") || "http://localhost:3000",
-    credentials: true,
-  }),
-);
+app.use(cors());
 
 // Body Parsing Middleware
 app.use(express.json({ limit: "10mb" }));
